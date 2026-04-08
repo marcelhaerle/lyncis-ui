@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Server } from 'lucide-react';
+import { Home, Server, ShieldAlert } from 'lucide-react';
 
 export function Sidebar() {
   const location = useLocation();
@@ -7,6 +7,7 @@ export function Sidebar() {
   const links = [
     { name: 'Dashboard', path: '/dashboard', icon: Home },
     { name: 'Agents', path: '/agents', icon: Server },
+    { name: 'Findings', path: '/findings', icon: ShieldAlert },
   ];
 
   return (

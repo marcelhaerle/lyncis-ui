@@ -41,6 +41,16 @@ export interface Scan {
   findings: ScanFinding[];
 }
 
+export interface GlobalFinding {
+  finding_id: string;
+  severity: 'warning' | 'suggestion';
+  test_id: string;
+  description: string;
+  agent_id: string;
+  hostname: string;
+  scan_date: string;
+}
+
 // Optionally, add interceptors here to globally handle auth errors or response formatting
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => response.data,

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { apiClient } from '../api/client';
 import type { Agent } from '../api/client';
 import { Activity, ShieldAlert, ShieldCheck, Users } from 'lucide-react';
@@ -55,7 +56,9 @@ export function Dashboard() {
             <StatCard title="Total Agents" value={stats?.total_agents || 0} icon={Users} />
             <StatCard title="Online Agents" value={stats?.online_agents || 0} icon={Activity} />
             <StatCard title="Avg Hardening Index" value={stats?.avg_hardening_index || 0} icon={ShieldCheck} />
-            <StatCard title="Critical Warnings" value={stats?.critical_warnings || 0} icon={ShieldAlert} alert />
+            <Link to="/findings?severity=warning" className="block focus:outline-none focus:ring-2 focus:ring-primary rounded-xl">
+              <StatCard title="Critical Warnings" value={stats?.critical_warnings || 0} icon={ShieldAlert} alert />
+            </Link>
           </div>
 
           <div className="mt-8 flex flex-col gap-4">
