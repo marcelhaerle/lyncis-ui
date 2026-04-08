@@ -3,7 +3,7 @@ import axios from 'axios';
 // Initialize Axios client with base URL pointing to the unified backend endpoint
 // Assuming standard proxying or running on a predefined URL.
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api/v1/ui',
+  baseURL: window.__ENV__?.VITE_API_BASE_URL || import.meta.env.VITE_API_BASE_URL || '/api/v1/ui',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

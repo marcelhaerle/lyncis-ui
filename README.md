@@ -53,6 +53,28 @@ To build and type-check the application for production deployment:
 npm run build
 ```
 
+## Docker Setup & Usage
+
+This project includes a multi-stage `Dockerfile` that builds the static React application and serves it securely via Nginx. It supports **runtime environment injection**, meaning you can configure the backend API URL when starting the container without needing to rebuild the image.
+
+### Building the Image
+
+```bash
+docker build -t lyncis-ui .
+```
+
+### Running the Container
+
+Run the container and inject your backend URL using the `LYNCIS_API_BASE_URL` environment variable:
+
+```bash
+docker run -p 8080:80 \
+  -e LYNCIS_API_BASE_URL=https://api.yourdomain.com/api/v1/ui \
+  lyncis-ui
+```
+
+If `VITE_API_BASE_URL` is omitted, the application will default to `/api/v1/ui` (ideal if you are proxying paths on the same domain).
+
 ## Related Repositories
 
 - [lyncis-agent](https://github.com/marcelhaerle/lyncis-agent) — Go binary deployed on managed hosts
