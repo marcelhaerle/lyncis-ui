@@ -146,3 +146,18 @@ Create unit and integration tests where possible. Document the code and implemen
   1. **Dashboard View:** Load `/dashboard` stats and display them as grid cards.
   2. **Agent View:** Load `/agents`. Display table with hostname, OS, status (green/red dot based on "online").
   3. Add a "Trigger Scan" button to the agent table. It calls the POST endpoint and shows a toast notification "Scan queued".
+
+### Feature 8: Scan Detail Report View
+
+* **Repository:** `lyncis-ui` & `lyncis-backend`
+* **Goal:** Allow users to dive deep into the results of a specific agent's latest scan, viewing both aggregated findings and raw data.
+* **Bckend Tasks:**
+  * Ensure `GET /api/v1/ui/agents/{agent_id}/scans/latest` is fully implemented. It must return the scan record, the associated scan_findings (array of warnings and suggestions), and the raw_data JSONB.
+* **UI Tasks:**
+  1. Add a "View Report" button to the actions column in the Agent list table (`/agents`).
+  2. Create a new dynamic route: `/agents/:agentId/report`.
+  3. Implement a data fetcher for this route calling the latest scan endpoint.
+  4. **Layout Design:**
+      * Top section: Header with Hostname, Scan Timestamp, and a large, colored Hardening Index score indicator.
+      * Middle section: A tabbed interface or grid separating "Warnings" and "Suggestions". Display these findings in a clean list or table (Test ID, Description).
+      * Bottom section: An expandable accordion or a read-only JSON viewer component displaying the raw_data for deep technical inspection.

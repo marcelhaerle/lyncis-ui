@@ -12,6 +12,33 @@ export const apiClient = axios.create({
 
 import type { AxiosResponse, AxiosError } from 'axios';
 
+export interface Agent {
+  id: string;
+  hostname: string;
+  os_info: string;
+  status: 'online' | 'offline';
+  online: boolean;
+  last_seen: string;
+}
+
+export interface ScanFinding {
+  id: string;
+  scan_id: string;
+  agent_id: string;
+  severity: 'warning' | 'suggestion';
+  test_id: string;
+  description: string;
+}
+
+export interface Scan {
+  id: string;
+  agent_id: string;
+  hardening_index: number;
+  raw_data: Record<string, string>;
+  created_at: string;
+  findings: ScanFinding[];
+}
+
 // Optionally, add interceptors here to globally handle auth errors or response formatting
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => response.data,

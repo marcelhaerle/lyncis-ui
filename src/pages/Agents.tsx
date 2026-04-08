@@ -1,16 +1,8 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { apiClient } from '../api/client';
+import { apiClient, type Agent } from '../api/client';
 import { HardDrive, Play, Search, ShieldAlert, Loader2 } from 'lucide-react';
-
-interface Agent {
-  id: string;
-  hostname: string;
-  os_info: string;
-  status: 'online' | 'offline';
-  online: boolean;
-  last_seen: string;
-}
 
 export function Agents() {
   const [agents, setAgents] = useState<Agent[]>([]);
@@ -98,10 +90,13 @@ export function Agents() {
                   <td className="py-4 px-6 text-zinc-500 font-mono text-xs">{new Date(agent.last_seen).toLocaleString()}</td>
                   <td className="py-4 px-6 text-right">
                     <div className="flex justify-end gap-2 text-xs uppercase font-bold tracking-wider">
-                      <button className="flex items-center gap-2 px-3 py-1.5 rounded bg-surface border border-border hover:bg-background hover:text-primary transition-colors">
+                      <Link 
+                        to={`/agents/${agent.id}/report`}
+                        className="flex items-center gap-2 px-3 py-1.5 rounded bg-surface border border-border hover:bg-background hover:text-primary transition-colors"
+                      >
                         <ShieldAlert className="w-3 h-3" />
                         Report
-                      </button>
+                      </Link>
                       <button 
                         onClick={() => triggerScan(agent.id)}
                         disabled={scanning === agent.id}

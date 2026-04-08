@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import { Layout } from './components/layout/Layout';
 import { Dashboard } from './pages/Dashboard';
 import { Agents } from './pages/Agents';
+import { ScanReport } from './pages/ScanReport';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="agents" element={<Agents />} />
+          <Route path="agents/:agentId/report" element={<ScanReport />} />
         </Route>
       </Routes>
     </BrowserRouter>
