@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { apiClient } from '../api/client';
+import type { Agent } from '../api/client';
 import { Activity, ShieldAlert, ShieldCheck, Users } from 'lucide-react';
 
 interface DashboardStats {
@@ -11,21 +12,26 @@ interface DashboardStats {
 
 export function Dashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchDashboard() {
+    async function fetchData() {
       try {
-        const response = await apiClient.get('/dashboard');
-        // Type assertion for now since we mapped the response directly
-        setStats(response as unknown as DashboardStats);
+        const [statsRes, agentsRes] = await Promise.all([
+          apiClient.get('/dashboard'),
+          apiClient.get('/agents')
+        ]);
+        
+        setStats(statsRes as unknown as DashboardStats);
+        setAgents(agentsRes as unknown as Agent[]);
       } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
       }
     }
-    fetchDashboard();
+    fetchData();
   }, []);
 
   return (
@@ -44,12 +50,54 @@ export function Dashboard() {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <StatCard title="Total Agents" value={stats?.total_agents || 0} icon={Users} />
-          <StatCard title="Online Agents" value={stats?.online_agents || 0} icon={Activity} />
-          <StatCard title="Avg Hardening Index" value={stats?.avg_hardening_index || 0} icon={ShieldCheck} />
-          <StatCard title="Critical Warnings" value={stats?.critical_warnings || 0} icon={ShieldAlert} alert />
-        </div>
+        <>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <StatCard title="Total Agents" value={stats?.total_agents || 0} icon={Users} />
+            <StatCard title="Online Agents" value={stats?.online_agents || 0} icon={Activity} />
+            <StatCard title="Avg Hardening Index" value={stats?.avg_hardening_index || 0} icon={ShieldCheck} />
+            <StatCard title="Critical Warnings" value={stats?.critical_warnings || 0} icon={ShieldAlert} alert />
+          </div>
+
+          <div className="mt-8 flex flex-col gap-4">
+            <h2 className="text-xl font-semibold tracking-wide text-zinc-100 uppercase">
+              Agent Posture Overview
+            </h2>
+            <div className="bg-surface border border-border rounded-xl p-6">
+              {agents.length === 0 ? (
+                <div className="text-zinc-500 text-sm">No agents available.</div>
+              ) : (
+                <div className="flex flex-col gap-6">
+                  {agents.map((agent) => {
+                    const score = agent.latest_hardening_index ?? 0;
+                    let colorClass = 'bg-zinc-700';
+                    if (agent.latest_hardening_index !== undefined) {
+                      if (score < 50) colorClass = 'bg-red-500';
+                      else if (score <= 75) colorClass = 'bg-yellow-500';
+                      else colorClass = 'bg-emerald-500';
+                    }
+
+                    return (
+                      <div key={agent.id} className="flex flex-col gap-2">
+                        <div className="flex justify-between items-end">
+                          <span className="text-zinc-200 font-medium">{agent.hostname}</span>
+                          <span className="text-zinc-400 text-sm font-mono">
+                            {agent.latest_hardening_index !== undefined ? `${score}/100` : 'N/A'}
+                          </span>
+                        </div>
+                        <div className="w-full bg-zinc-800 rounded-full h-2.5 overflow-hidden">
+                          <div
+                            className={`h-2.5 rounded-full ${colorClass}`}
+                            style={{ width: `${agent.latest_hardening_index !== undefined ? score : 0}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

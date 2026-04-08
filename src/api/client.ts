@@ -19,6 +19,8 @@ export interface Agent {
   status: 'online' | 'offline';
   online: boolean;
   last_seen: string;
+  latest_hardening_index?: number;
+  latest_scan_at?: string;
 }
 
 export interface ScanFinding {
