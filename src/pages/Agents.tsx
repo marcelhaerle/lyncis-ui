@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { apiClient } from '../api/client';
-import { HardDrive, Play, Search, ShieldAlert } from 'lucide-react';
+import { HardDrive, Play, Search, ShieldAlert, Loader2 } from 'lucide-react';
 
 interface Agent {
   id: string;
@@ -13,6 +14,7 @@ interface Agent {
 export function Agents() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [scanning, setScanning] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchAgents() {
@@ -29,12 +31,15 @@ export function Agents() {
   }, []);
 
   const triggerScan = async (agentId: string) => {
+    setScanning(agentId);
     try {
       await apiClient.post(`/agents/${agentId}/scan`);
-      alert('Scan queued successfully.');
+      toast.success('Scan queued successfully.');
     } catch (err) {
       console.error(err);
-      alert('Failed to queue scan.');
+      toast.error('Failed to queue scan.');
+    } finally {
+      setScanning(null);
     }
   };
 
@@ -98,10 +103,11 @@ export function Agents() {
                       </button>
                       <button 
                         onClick={() => triggerScan(agent.id)}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20 transition-colors"
+                        disabled={scanning === agent.id}
+                        className="flex items-center gap-2 px-3 py-1.5 rounded bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <Play className="w-3 h-3" />
-                        Trigger Scan
+                        {scanning === agent.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Play className="w-3 h-3" />}
+                        {scanning === agent.id ? 'Queuing...' : 'Trigger Scan'}
                       </button>
                     </div>
                   </td>
