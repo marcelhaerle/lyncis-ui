@@ -8,6 +8,7 @@ interface Agent {
   hostname: string;
   os_info: string;
   status: 'online' | 'offline';
+  online: boolean;
   last_seen: string;
 }
 
@@ -85,8 +86,8 @@ export function Agents() {
                 <tr key={agent.id} className="hover:bg-background/20 transition-colors">
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-2">
-                      <span className={`w-2.5 h-2.5 rounded-full shadow-[0_0_8px_currentColor] ${agent.status === 'online' ? 'bg-green-500 text-green-500' : 'bg-red-500 text-red-500'}`}></span>
-                      <span className="capitalize">{agent.status}</span>
+                      <span className={`w-2.5 h-2.5 rounded-full shadow-[0_0_8px_currentColor] ${agent.online ? 'bg-green-500 text-green-500' : 'bg-red-500 text-red-500'}`}></span>
+                      <span className="capitalize">{agent.online ? 'Online' : 'Offline'}</span>
                     </div>
                   </td>
                   <td className="py-4 px-6 font-mono text-zinc-300 flex items-center gap-2">
