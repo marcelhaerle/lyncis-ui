@@ -18,6 +18,7 @@ export interface Agent {
   os_info: string;
   status: 'online' | 'offline';
   online: boolean;
+  activity_status?: 'idle' | 'pending' | 'scanning';
   last_seen: string;
   latest_hardening_index?: number;
   latest_scan_at?: string;

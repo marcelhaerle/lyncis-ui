@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { apiClient, type Agent } from '../api/client';
-import { HardDrive, Play, Search, ShieldAlert, Loader2 } from 'lucide-react';
+import { HardDrive, Play, Search, ShieldAlert, Loader2, Hourglass, Check } from 'lucide-react';
 
 export function Agents() {
   const [agents, setAgents] = useState<Agent[]>([]);
@@ -21,12 +21,16 @@ export function Agents() {
       }
     }
     fetchAgents();
+
+    const intervalId = setInterval(fetchAgents, 5000); // Poll every 5 seconds
+    return () => clearInterval(intervalId);
   }, []);
 
   const triggerScan = async (agentId: string) => {
     setScanning(agentId);
     try {
       await apiClient.post(`/agents/${agentId}/scan`);
+      setAgents(prev => prev.map(a => a.id === agentId ? { ...a, activity_status: 'pending' } : a));
       toast.success('Scan queued successfully.');
     } catch (err) {
       console.error(err);
@@ -59,6 +63,7 @@ export function Agents() {
             <tr className="border-b border-border text-xs uppercase tracking-widest text-zinc-500 bg-background/30">
               <th className="font-semibold py-4 px-6">Status</th>
               <th className="font-semibold py-4 px-6">Hostname</th>
+              <th className="font-semibold py-4 px-6">Activity</th>
               <th className="font-semibold py-4 px-6">OS Info</th>
               <th className="font-semibold py-4 px-6">Last Seen</th>
               <th className="font-semibold py-4 px-6 text-right">Actions</th>
@@ -67,24 +72,44 @@ export function Agents() {
           <tbody className="divide-y divide-border/50 text-sm">
             {loading ? (
               <tr>
-                <td colSpan={5} className="py-8 text-center text-zinc-500">Retrieving intelligence...</td>
+                <td colSpan={6} className="py-8 text-center text-zinc-500">Retrieving intelligence...</td>
               </tr>
             ) : agents.length === 0 ? (
                <tr>
-                <td colSpan={5} className="py-8 text-center text-zinc-500">No agents deployed.</td>
+                <td colSpan={6} className="py-8 text-center text-zinc-500">No agents deployed.</td>
               </tr>
             ) : (
               agents.map((agent) => (
                 <tr key={agent.id} className="hover:bg-background/20 transition-colors">
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-2">
-                      <span className={`w-2.5 h-2.5 rounded-full shadow-[0_0_8px_currentColor] ${agent.online ? 'bg-green-500 text-green-500' : 'bg-red-500 text-red-500'}`}></span>
+                       <span className={`w-2.5 h-2.5 rounded-full shadow-[0_0_8px_currentColor] ${agent.online ? 'bg-green-500 text-green-500' : 'bg-red-500 text-red-500'}`}></span>
                       <span className="capitalize">{agent.online ? 'Online' : 'Offline'}</span>
                     </div>
                   </td>
-                  <td className="py-4 px-6 font-mono text-zinc-300 flex items-center gap-2">
-                    <HardDrive className="w-4 h-4 text-primary" />
-                    {agent.hostname}
+                  <td className="py-4 px-6 font-mono text-zinc-300">
+                    <div className="flex items-center gap-2">
+                      <HardDrive className="w-4 h-4 text-primary" />
+                      {agent.hostname}
+                    </div>
+                  </td>
+                  <td className="py-4 px-6">
+                    {agent.activity_status === 'scanning' ? (
+                      <span className="flex items-center gap-1.5 text-primary text-xs tracking-wider uppercase font-semibold">
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        Scanning...
+                      </span>
+                    ) : agent.activity_status === 'pending' ? (
+                      <span className="flex items-center gap-1.5 text-amber-500 text-xs tracking-wider uppercase font-semibold animate-pulse">
+                        <Hourglass className="w-3.5 h-3.5" />
+                        Queued
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1.5 text-zinc-500 text-xs tracking-wider uppercase font-semibold">
+                        <Check className="w-3.5 h-3.5 opacity-50" />
+                        Idle
+                      </span>
+                    )}
                   </td>
                   <td className="py-4 px-6 text-zinc-400">{agent.os_info}</td>
                   <td className="py-4 px-6 text-zinc-500 font-mono text-xs">{new Date(agent.last_seen).toLocaleString()}</td>
@@ -99,7 +124,8 @@ export function Agents() {
                       </Link>
                       <button 
                         onClick={() => triggerScan(agent.id)}
-                        disabled={scanning === agent.id}
+                        disabled={agent.activity_status !== 'idle' && agent.activity_status !== undefined || scanning === agent.id}
+                        title={agent.activity_status !== 'idle' && agent.activity_status !== undefined ? "A scan is already scheduled or in progress for this agent." : undefined}
                         className="flex items-center gap-2 px-3 py-1.5 rounded bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {scanning === agent.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Play className="w-3 h-3" />}
