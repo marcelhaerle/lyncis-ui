@@ -82,9 +82,12 @@ export function Dashboard() {
                     return (
                       <div key={agent.id} className="flex flex-col gap-2">
                         <div className="flex justify-between items-end">
-                          <Link to={`/agents/${agent.id}/report`} className="text-lg font-medium text-zinc-400 hover:text-primary/80 flex items-center gap-2">
-                            <span className="font-medium">{agent.hostname}</span>
-                          </Link>
+                          <div className="flex items-center gap-2">
+                            <OnlineStatus online={agent.online} />
+                            <Link to={`/agents/${agent.id}/report`} className="text-lg font-medium text-zinc-400 hover:text-primary/80 flex items-center gap-2">
+                              <span className="font-medium">{agent.hostname}</span>
+                            </Link>
+                          </div>
                           <span className="text-zinc-400 text-sm font-mono">
                             {agent.latest_hardening_index !== undefined ? `${score}/100` : 'N/A'}
                           </span>
@@ -109,6 +112,7 @@ export function Dashboard() {
 }
 
 import type { LucideIcon } from 'lucide-react';
+import { OnlineStatus } from '../components/agent/OnlineStatus';
 
 function StatCard({ title, value, icon: Icon, alert = false }: { title: string, value: string | number, icon: LucideIcon, alert?: boolean }) {
   return (
