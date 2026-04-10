@@ -54,7 +54,9 @@ export function Dashboard() {
       ) : (
         <>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-            <StatCard title="Total Agents" value={stats?.total_agents || 0} icon={Users} />
+            <Link to="/agents" className="block focus:outline-none focus:ring-2 focus:ring-primary rounded-xl">
+              <StatCard title="Total Agents" value={stats?.total_agents || 0} icon={Users} />
+            </Link>
             <StatCard title="Online Agents" value={stats?.online_agents || 0} icon={Activity} />
             <StatCard title="Avg Hardening Index" value={stats?.avg_hardening_index || 0} icon={ShieldCheck} />
             <Link to="/findings?severity=warning" className="block focus:outline-none focus:ring-2 focus:ring-primary rounded-xl">
