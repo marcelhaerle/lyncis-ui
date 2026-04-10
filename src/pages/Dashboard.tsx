@@ -75,7 +75,7 @@ export function Dashboard() {
                     let colorClass = 'bg-zinc-700';
                     if (agent.latest_hardening_index !== undefined) {
                       if (score < 50) colorClass = 'bg-red-500';
-                      else if (score <= 75) colorClass = 'bg-yellow-500';
+                      else if (score < 75) colorClass = 'bg-yellow-500';
                       else colorClass = 'bg-emerald-500';
                     }
 
