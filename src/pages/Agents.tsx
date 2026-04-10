@@ -32,7 +32,7 @@ export function Agents() {
     setScanning(agentId);
     try {
       await apiClient.post(`/agents/${agentId}/scan`);
-      setAgents(prev => prev.map(a => a.id === agentId ? { ...a, activity_status: 'pending' } : a));
+      setAgents((prev) => prev.map((a) => (a.id === agentId ? { ...a, activity_status: 'pending' } : a)));
       toast.success('Scan queued successfully.');
     } catch (err) {
       console.error(err);
@@ -47,14 +47,16 @@ export function Agents() {
       <header className="flex flex-col gap-2">
         <div className="flex justify-between items-end">
           <div>
-            <h1 className="text-3xl font-bold tracking-widest text-primary uppercase">
-              Fleet Management
-            </h1>
+            <h1 className="text-3xl font-bold tracking-widest text-primary uppercase">Fleet Management</h1>
             <p className="text-zinc-400">Manage connected agents and initiate security sweeps.</p>
           </div>
           <div className="flex bg-surface border border-border px-3 py-2 rounded gap-2 items-center text-sm w-64 shadow-inner">
             <Search className="w-4 h-4 text-zinc-500" />
-            <input type="text" placeholder="Search hostnames..." className="bg-transparent text-zinc-100 outline-none w-full placeholder-zinc-600" />
+            <input
+              type="text"
+              placeholder="Search hostnames..."
+              className="bg-transparent text-zinc-100 outline-none w-full placeholder-zinc-600"
+            />
           </div>
         </div>
       </header>
@@ -74,11 +76,15 @@ export function Agents() {
           <tbody className="divide-y divide-border/50 text-sm">
             {loading ? (
               <tr>
-                <td colSpan={6} className="py-8 text-center text-zinc-500">Retrieving intelligence...</td>
+                <td colSpan={6} className="py-8 text-center text-zinc-500">
+                  Retrieving intelligence...
+                </td>
               </tr>
             ) : agents.length === 0 ? (
-               <tr>
-                <td colSpan={6} className="py-8 text-center text-zinc-500">No agents deployed.</td>
+              <tr>
+                <td colSpan={6} className="py-8 text-center text-zinc-500">
+                  No agents deployed.
+                </td>
               </tr>
             ) : (
               agents.map((agent) => (
@@ -114,30 +120,43 @@ export function Agents() {
                     )}
                   </td>
                   <td className="py-4 px-6 text-zinc-400">{agent.os_info}</td>
-                  <td className="py-4 px-6 text-zinc-500 font-mono text-xs">{formatDistanceToNow(new Date(agent.last_seen), { addSuffix: true })}</td>
+                  <td className="py-4 px-6 text-zinc-500 font-mono text-xs">
+                    {formatDistanceToNow(new Date(agent.last_seen), { addSuffix: true })}
+                  </td>
                   <td className="py-4 px-6 text-right">
                     <div className="flex justify-end gap-2 text-xs uppercase font-bold tracking-wider">
-                      <Link 
+                      <Link
                         to={`/agents/${agent.id}/report`}
                         className="flex items-center gap-2 px-3 py-1.5 rounded bg-surface border border-border hover:bg-background hover:text-primary transition-colors"
                       >
                         <ShieldAlert className="w-3 h-3" />
                         Report
                       </Link>
-                      <Link 
+                      <Link
                         to={`/agents/${agent.id}/history`}
                         className="flex items-center gap-2 px-3 py-1.5 rounded bg-surface border border-border hover:bg-background hover:text-primary transition-colors"
                       >
                         <History className="w-3 h-3" />
                         History
                       </Link>
-                      <button 
+                      <button
                         onClick={() => triggerScan(agent.id)}
-                        disabled={agent.activity_status !== 'idle' && agent.activity_status !== undefined || scanning === agent.id}
-                        title={agent.activity_status !== 'idle' && agent.activity_status !== undefined ? "A scan is already scheduled or in progress for this agent." : undefined}
+                        disabled={
+                          (agent.activity_status !== 'idle' && agent.activity_status !== undefined) ||
+                          scanning === agent.id
+                        }
+                        title={
+                          agent.activity_status !== 'idle' && agent.activity_status !== undefined
+                            ? 'A scan is already scheduled or in progress for this agent.'
+                            : undefined
+                        }
                         className="flex items-center gap-2 px-3 py-1.5 rounded bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        {scanning === agent.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Play className="w-3 h-3" />}
+                        {scanning === agent.id ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          <Play className="w-3 h-3" />
+                        )}
                         {scanning === agent.id ? 'Queuing...' : 'Trigger Scan'}
                       </button>
                     </div>

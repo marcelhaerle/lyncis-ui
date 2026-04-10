@@ -8,7 +8,7 @@ export function Findings() {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialTab = searchParams.get('severity') === 'suggestion' ? 'suggestions' : 'warnings';
   const [activeTab, setActiveTab] = useState<'warnings' | 'suggestions'>(initialTab);
-  
+
   const [findings, setFindings] = useState<GlobalFinding[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -29,13 +29,14 @@ export function Findings() {
     fetchFindings();
   }, []);
 
-  const filteredFindings = findings.filter(f => 
-    f.hostname.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    f.description.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredFindings = findings.filter(
+    (f) =>
+      f.hostname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      f.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const warnings = filteredFindings.filter(f => f.severity === 'warning');
-  const suggestions = filteredFindings.filter(f => f.severity === 'suggestion');
+  const warnings = filteredFindings.filter((f) => f.severity === 'warning');
+  const suggestions = filteredFindings.filter((f) => f.severity === 'suggestion');
 
   const displayedFindings = activeTab === 'warnings' ? warnings : suggestions;
 
@@ -46,9 +47,7 @@ export function Findings() {
           <ShieldAlert className="w-8 h-8 text-primary" />
           Global Findings
         </h1>
-        <p className="text-zinc-400">
-          Actionable list of infrastructure warnings and suggestions.
-        </p>
+        <p className="text-zinc-400">Actionable list of infrastructure warnings and suggestions.</p>
       </header>
 
       <div className="flex flex-col gap-4">
@@ -67,15 +66,21 @@ export function Findings() {
 
         {/* Tabs */}
         <div className="flex border-b border-border text-sm font-semibold tracking-widest mt-2">
-          <button 
-            onClick={() => { setActiveTab('warnings'); setSearchParams({ severity: 'warning' }) }} 
+          <button
+            onClick={() => {
+              setActiveTab('warnings');
+              setSearchParams({ severity: 'warning' });
+            }}
             className={`px-6 py-3 border-b-2 flex items-center gap-2 transition-colors ${activeTab === 'warnings' ? 'border-red-500 text-red-500' : 'border-transparent text-zinc-500 hover:text-zinc-300'}`}
           >
             <AlertTriangle className="w-4 h-4" />
             Warnings ({warnings.length})
           </button>
-          <button 
-            onClick={() => { setActiveTab('suggestions'); setSearchParams({ severity: 'suggestion' }) }} 
+          <button
+            onClick={() => {
+              setActiveTab('suggestions');
+              setSearchParams({ severity: 'suggestion' });
+            }}
             className={`px-6 py-3 border-b-2 flex items-center gap-2 transition-colors ${activeTab === 'suggestions' ? 'border-yellow-500 text-yellow-500' : 'border-transparent text-zinc-500 hover:text-zinc-300'}`}
           >
             <Info className="w-4 h-4" />
@@ -86,7 +91,7 @@ export function Findings() {
         <div className="bg-surface border border-border rounded-xl p-4 overflow-hidden">
           {loading ? (
             <div className="animate-pulse space-y-4">
-              {[1, 2, 3, 4, 5].map(i => (
+              {[1, 2, 3, 4, 5].map((i) => (
                 <div key={i} className="h-10 bg-zinc-800 rounded"></div>
               ))}
             </div>
@@ -110,7 +115,10 @@ export function Findings() {
                   {displayedFindings.map((finding) => (
                     <tr key={finding.finding_id} className="hover:bg-zinc-800/50 transition-colors">
                       <td className="py-4 px-4 font-medium text-emerald-400 hover:text-emerald-300">
-                        <Link to={`/agents/${finding.agent_id}/report`} className="underline underline-offset-4 decoration-emerald-900">
+                        <Link
+                          to={`/agents/${finding.agent_id}/report`}
+                          className="underline underline-offset-4 decoration-emerald-900"
+                        >
                           {finding.hostname}
                         </Link>
                       </td>

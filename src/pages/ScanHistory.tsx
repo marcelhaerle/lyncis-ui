@@ -18,17 +18,17 @@ export function ScanHistory() {
         setLoading(true);
         const [agentRes, historyRes, diffRes] = await Promise.all([
           apiClient.get('/agents'),
-          apiClient.get(`/agents/${agentId}/scans/history`).catch(err => {
+          apiClient.get(`/agents/${agentId}/scans/history`).catch((err) => {
             if (err.response?.status === 404) return [];
             throw err;
           }),
-          apiClient.get(`/agents/${agentId}/scans/latest/diff`).catch(err => {
+          apiClient.get(`/agents/${agentId}/scans/latest/diff`).catch((err) => {
             if (err.response?.status === 404) return null;
             throw err;
           }),
         ]);
-        
-        const agentMatch = (agentRes as unknown as Agent[]).find(a => a.id === agentId);
+
+        const agentMatch = (agentRes as unknown as Agent[]).find((a) => a.id === agentId);
         setAgent(agentMatch || null);
         setHistory(historyRes as unknown as IScanHistory[]);
         setDiff(diffRes as unknown as ScanDiff);
@@ -39,7 +39,7 @@ export function ScanHistory() {
         setLoading(false);
       }
     }
-    
+
     if (agentId) {
       fetchData();
     }
@@ -71,7 +71,10 @@ export function ScanHistory() {
     <div className="max-w-6xl mx-auto flex flex-col gap-6 h-full pb-8">
       <header className="flex flex-col gap-4">
         <div>
-          <Link to="/agents" className="text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-2 text-sm font-semibold mb-4 w-fit uppercase tracking-widest">
+          <Link
+            to="/agents"
+            className="text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-2 text-sm font-semibold mb-4 w-fit uppercase tracking-widest"
+          >
             <ArrowLeft className="w-4 h-4" /> Back
           </Link>
           <div className="flex flex-wrap items-start justify-between gap-4">
@@ -98,45 +101,40 @@ export function ScanHistory() {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={history} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
-                  <XAxis 
-                    dataKey="created_at" 
-                    stroke="#52525b" 
-                    tick={{ fill: '#71717a', fontSize: 12 }} 
-                    tickFormatter={(val) => new Date(val).toLocaleDateString()} 
+                  <XAxis
+                    dataKey="created_at"
+                    stroke="#52525b"
+                    tick={{ fill: '#71717a', fontSize: 12 }}
+                    tickFormatter={(val) => new Date(val).toLocaleDateString()}
                   />
-                  <YAxis 
-                    yAxisId="left"
-                    stroke="#06b6d4" 
-                    domain={[0, 100]}
-                    tick={{ fill: '#06b6d4', fontSize: 12 }} 
+                  <YAxis yAxisId="left" stroke="#06b6d4" domain={[0, 100]} tick={{ fill: '#06b6d4', fontSize: 12 }} />
+                  <YAxis
+                    yAxisId="right"
+                    orientation="right"
+                    stroke="#ef4444"
+                    tick={{ fill: '#ef4444', fontSize: 12 }}
                   />
-                  <YAxis 
-                    yAxisId="right" 
-                    orientation="right" 
-                    stroke="#ef4444" 
-                    tick={{ fill: '#ef4444', fontSize: 12 }} 
-                  />
-                  <Tooltip 
+                  <Tooltip
                     contentStyle={{ backgroundColor: '#18181b', borderColor: '#27272a', color: '#f4f4f5' }}
                     labelFormatter={(label) => new Date(label as string).toLocaleString()}
                   />
-                  <Line 
-                    yAxisId="left" 
-                    type="monotone" 
-                    dataKey="hardening_index" 
-                    name="Hardening Index" 
-                    stroke="#06b6d4" 
+                  <Line
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="hardening_index"
+                    name="Hardening Index"
+                    stroke="#06b6d4"
                     strokeWidth={3}
                     activeDot={{ r: 6, fill: '#06b6d4', stroke: '#09090b', strokeWidth: 2 }}
                   />
-                  <Line 
-                    yAxisId="right" 
-                    type="monotone" 
-                    dataKey="warning_count" 
-                    name="Warnings" 
-                    stroke="#ef4444" 
+                  <Line
+                    yAxisId="right"
+                    type="monotone"
+                    dataKey="warning_count"
+                    name="Warnings"
+                    stroke="#ef4444"
                     strokeWidth={2}
-                    strokeDasharray="5 5" 
+                    strokeDasharray="5 5"
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -151,13 +149,11 @@ export function ScanHistory() {
         {/* Delta Panel */}
         <div className="bg-surface border border-border rounded-xl shadow-lg shadow-black/20 flex flex-col overflow-hidden">
           <div className="p-6 border-b border-border bg-background/30">
-            <h2 className="text-xl font-semibold tracking-wide text-zinc-100 uppercase">
-              Changes Since Last Scan
-            </h2>
+            <h2 className="text-xl font-semibold tracking-wide text-zinc-100 uppercase">Changes Since Last Scan</h2>
           </div>
-          
+
           <div className="p-6 flex flex-col gap-6">
-            {!diff||(diff.resolved_issues.length===0&&diff.new_issues.length===0)?(
+            {!diff || (diff.resolved_issues.length === 0 && diff.new_issues.length === 0) ? (
               <div className="p-12 flex flex-col items-center justify-center text-zinc-500 bg-background/20 rounded-lg border border-border/50">
                 <Activity className="w-10 h-10 mb-3 text-zinc-600" />
                 <p className="uppercase tracking-widest font-bold text-sm">No state changes detected</p>
@@ -178,7 +174,9 @@ export function ScanHistory() {
                         {diff.resolved_issues.map((issue) => (
                           <li key={issue.id} className="p-4 flex flex-col gap-1 hover:bg-[#10b981]/5 transition-colors">
                             <span className="text-xs font-mono text-[#10b981] font-bold">{issue.test_id}</span>
-                            <span className="text-sm text-zinc-400 line-through decoration-zinc-500">{issue.description}</span>
+                            <span className="text-sm text-zinc-400 line-through decoration-zinc-500">
+                              {issue.description}
+                            </span>
                           </li>
                         ))}
                       </ul>
