@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { apiClient, type Agent } from '../api/client';
-import { HardDrive, Play, Search, ShieldAlert, Loader2, Hourglass, Check } from 'lucide-react';
+import { HardDrive, Play, Search, ShieldAlert, Loader2, Hourglass, Check, History } from 'lucide-react';
 
 export function Agents() {
   const [agents, setAgents] = useState<Agent[]>([]);
@@ -121,6 +121,13 @@ export function Agents() {
                       >
                         <ShieldAlert className="w-3 h-3" />
                         Report
+                      </Link>
+                      <Link 
+                        to={`/agents/${agent.id}/history`}
+                        className="flex items-center gap-2 px-3 py-1.5 rounded bg-surface border border-border hover:bg-background hover:text-primary transition-colors"
+                      >
+                        <History className="w-3 h-3" />
+                        History
                       </Link>
                       <button 
                         onClick={() => triggerScan(agent.id)}

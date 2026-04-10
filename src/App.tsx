@@ -5,6 +5,7 @@ import { Dashboard } from './pages/Dashboard';
 import { Agents } from './pages/Agents';
 import { ScanReport } from './pages/ScanReport';
 import { Findings } from './pages/Findings';
+import { ScanHistory } from './pages/ScanHistory';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="agents" element={<Agents />} />
           <Route path="agents/:agentId/report" element={<ScanReport />} />
+          <Route path="agents/:agentId/history" element={<ScanHistory />} />
           <Route path="findings" element={<Findings />} />
         </Route>
       </Routes>

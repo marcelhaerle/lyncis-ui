@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { apiClient } from '../api/client';
 import type { Agent } from '../api/client';
 import { Activity, ShieldAlert, ShieldCheck, Users } from 'lucide-react';
+import { getHardeningScoreBgColor } from '../utils/theme';
 
 interface DashboardStats {
   total_agents: number;
@@ -72,12 +73,9 @@ export function Dashboard() {
                 <div className="flex flex-col gap-6">
                   {agents.map((agent) => {
                     const score = agent.latest_hardening_index ?? 0;
-                    let colorClass = 'bg-zinc-700';
-                    if (agent.latest_hardening_index !== undefined) {
-                      if (score < 50) colorClass = 'bg-red-500';
-                      else if (score < 75) colorClass = 'bg-yellow-500';
-                      else colorClass = 'bg-emerald-500';
-                    }
+                    const colorClass = agent.latest_hardening_index !== undefined 
+                      ? getHardeningScoreBgColor(score) 
+                      : 'bg-zinc-700';
 
                     return (
                       <div key={agent.id} className="flex flex-col gap-2">
