@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Server, Calendar, ShieldAlert, Cpu, AlertTriangle, Info, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Server, Calendar, ShieldAlert, Cpu, AlertTriangle, Info, CheckCircle2, Trash2, AlertOctagon } from 'lucide-react';
 import { apiClient, type Agent, type Scan } from '../api/client';
 
 export function ScanReport() {
   const { agentId } = useParams<{ agentId: string }>();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [scan, setScan] = useState<Scan | null>(null);
   const [agent, setAgent] = useState<Agent | null>(null);
   const [activeTab, setActiveTab] = useState<'warnings' | 'suggestions' | 'raw'>('warnings');
@@ -40,6 +43,21 @@ export function ScanReport() {
       fetchData();
     }
   }, [agentId]);
+
+  const handleDeleteAgent = async () => {
+    if (!agentId) return;
+    try {
+      setIsDeleting(true);
+      await apiClient.delete(`/agents/${agentId}`);
+      toast.success('Agent deleted successfully');
+      navigate('/agents');
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to delete agent. Please try again.');
+      setIsDeleting(false);
+      setShowDeleteModal(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -91,10 +109,19 @@ export function ScanReport() {
     <div className="max-w-6xl mx-auto flex flex-col gap-6 h-full pb-8">
       {/* Header section */}
       <header className="flex flex-col gap-4">
-        <div>
+        <div className="flex justify-between items-center">
           <Link to="/agents" className="text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-2 text-sm font-semibold mb-4 w-fit uppercase tracking-widest">
             <ArrowLeft className="w-4 h-4" /> Back
           </Link>
+          <button
+            onClick={() => setShowDeleteModal(true)}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-semibold tracking-widest uppercase border border-red-500/50 text-red-500 rounded-md hover:bg-red-500/10 transition-colors"
+          >
+            <Trash2 className="w-4 h-4" />
+            Delete Agent
+          </button>
+        </div>
+        <div>
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold tracking-widest text-primary uppercase flex items-center gap-3">
@@ -245,6 +272,44 @@ export function ScanReport() {
         })()}
 
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-surface border border-red-500/20 p-6 rounded-xl shadow-2xl shadow-red-500/10 max-w-md w-full animate-in fade-in zoom-in duration-200">
+            <div className="flex items-center gap-3 text-red-500 mb-4">
+              <AlertOctagon className="w-8 h-8" />
+              <h2 className="text-xl font-bold uppercase tracking-widest">Delete Agent</h2>
+            </div>
+            <p className="text-zinc-300 mb-6 leading-relaxed">
+              Are you sure? This will permanently delete the agent <strong className="text-zinc-100">{agent.hostname}</strong> and all its historical scan data. This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3 font-semibold uppercase tracking-widest text-sm">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                disabled={isDeleting}
+                className="px-4 py-2 rounded border border-border text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 disabled:opacity-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAgent}
+                disabled={isDeleting}
+                className="px-4 py-2 rounded bg-red-600/20 border border-red-600 text-red-500 hover:bg-red-600/40 disabled:opacity-50 transition-colors flex items-center gap-2"
+              >
+                {isDeleting ? (
+                  <>
+                    <Server className="w-4 h-4 animate-pulse" />
+                    Deleting...
+                  </>
+                ) : (
+                  'Permanently Delete'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
