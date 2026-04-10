@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { formatDistanceToNow } from 'date-fns';
 import toast from 'react-hot-toast';
 import { ArrowLeft, Server, Calendar, ShieldAlert, Cpu, AlertTriangle, Info, CheckCircle2, Trash2, AlertOctagon } from 'lucide-react';
 import { apiClient, type Agent, type Scan } from '../api/client';
@@ -126,7 +127,7 @@ export function ScanReport() {
               </h1>
               <div className="flex flex-wrap gap-4 mt-3 text-sm text-zinc-400 font-mono">
                 <div className="flex items-center gap-1.5"><Cpu className="w-4 h-4 text-zinc-500" /> {agent.os_info}</div>
-                <div className="flex items-center gap-1.5"><Calendar className="w-4 h-4 text-zinc-500" /> {new Date(scan.created_at).toLocaleString()}</div>
+                <div className="flex items-center gap-1.5"><Calendar className="w-4 h-4 text-zinc-500" /> {formatDistanceToNow(new Date(scan.created_at), { addSuffix: true })}</div>
                 <div className="flex items-center gap-1.5">
                   <span className={`w-2 h-2 rounded-full shadow-[0_0_8px_currentColor] ${agent.online ? 'bg-green-500 text-green-500' : 'bg-red-500 text-red-500'}`}></span>
                   <span className="capitalize">{agent.online ? 'Online' : 'Offline'}</span>

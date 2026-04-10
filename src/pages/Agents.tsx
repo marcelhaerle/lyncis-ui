@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { apiClient, type Agent } from '../api/client';
 import { HardDrive, Play, Search, ShieldAlert, Loader2, Hourglass, Check, History } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
 import { OnlineStatus } from '../components/agent/OnlineStatus';
 
 export function Agents() {
@@ -113,7 +114,7 @@ export function Agents() {
                     )}
                   </td>
                   <td className="py-4 px-6 text-zinc-400">{agent.os_info}</td>
-                  <td className="py-4 px-6 text-zinc-500 font-mono text-xs">{new Date(agent.last_seen).toLocaleString()}</td>
+                  <td className="py-4 px-6 text-zinc-500 font-mono text-xs">{formatDistanceToNow(new Date(agent.last_seen), { addSuffix: true })}</td>
                   <td className="py-4 px-6 text-right">
                     <div className="flex justify-end gap-2 text-xs uppercase font-bold tracking-wider">
                       <Link 
