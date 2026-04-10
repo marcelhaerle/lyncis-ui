@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { apiClient, type Agent } from '../api/client';
 import { HardDrive, Play, Search, ShieldAlert, Loader2, Hourglass, Check, History } from 'lucide-react';
+import { OnlineStatus } from '../components/agent/OnlineStatus';
 
 export function Agents() {
   const [agents, setAgents] = useState<Agent[]>([]);
@@ -83,7 +84,7 @@ export function Agents() {
                 <tr key={agent.id} className="hover:bg-background/20 transition-colors">
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-2">
-                       <span className={`w-2.5 h-2.5 rounded-full shadow-[0_0_8px_currentColor] ${agent.online ? 'bg-green-500 text-green-500' : 'bg-red-500 text-red-500'}`}></span>
+                      <OnlineStatus online={agent.online} />
                       <span className="capitalize">{agent.online ? 'Online' : 'Offline'}</span>
                     </div>
                   </td>
