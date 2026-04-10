@@ -37,7 +37,7 @@ export function Dashboard() {
   }, []);
 
   return (
-    <div className="max-w-6xl mx-auto flex flex-col gap-8">
+    <div className="max-w-7xl mx-auto flex flex-col gap-8">
       <header className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-widest text-primary uppercase">
           Command Center

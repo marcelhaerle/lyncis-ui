@@ -41,7 +41,7 @@ export function Agents() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto flex flex-col gap-8 h-full">
+    <div className="max-w-7xl mx-auto flex flex-col gap-8 h-full">
       <header className="flex flex-col gap-2">
         <div className="flex justify-between items-end">
           <div>

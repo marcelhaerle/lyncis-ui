@@ -40,7 +40,7 @@ export function Findings() {
   const displayedFindings = activeTab === 'warnings' ? warnings : suggestions;
 
   return (
-    <div className="max-w-6xl mx-auto flex flex-col gap-8">
+    <div className="max-w-7xl mx-auto flex flex-col gap-8">
       <header className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-widest text-primary uppercase flex items-center gap-3">
           <ShieldAlert className="w-8 h-8 text-primary" />
